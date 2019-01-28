@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  tags:
+    - docker
+
+  vars_files:
+    - config.yml
+
+  tasks:
+    - import_tasks: tasks/docker.yml
+    - import_tasks: tasks/lando.yml

@@ -1,0 +1,23 @@
+---
+- name: Install Python 3.5
+  apt:
+    name: python3
+    state: present
+
+- name: Install Python PIP
+  apt:
+    name:
+      - python3-venv
+      - python3-pip
+    state: present
+
+- name: Install Python setuptools
+  command: pip install setuptools
+
+- name: Install ansible-container
+  pip:
+    name: ansible-container[docker]
+
+- name: Install python docker
+  pip:
+    name: docker==2.7.0

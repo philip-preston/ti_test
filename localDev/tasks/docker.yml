@@ -1,0 +1,39 @@
+---
+- name: Create docker group
+  group:
+    name: docker
+    state: present
+
+- name: Create Lando user
+  user:
+    name: lando
+    group: docker
+
+- name: Enable HTTPS for apt
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg2
+      - software-properties-common
+
+- name: Attach Docker GPG key to apt
+  apt_key:
+    id: 0EBFCD88
+    file: /vagrant/files/docker.gpg
+    state: present
+
+- name: Get distribution info
+  shell: lsb_release -cs
+  register: release
+
+- name: Add docker repository to apt
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ release.stdout }} stable"
+
+- name: Install Docker
+  apt:
+    name: docker-ce
+    update_cache: yes

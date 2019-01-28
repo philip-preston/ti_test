@@ -1,0 +1,10 @@
+---
+- name: Install Lando
+  apt:
+    deb: /vagrant/files/lando-v3.0.0-rc.1.deb
+
+- name: Install jq to parse JSON as part of lando setup
+  apt:
+    name: jq
+
+

@@ -1,0 +1,6 @@
+name: Product API Module
+description: Provides access to product API
+package: Custom
+
+type: module
+core: 8.x

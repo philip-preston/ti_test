@@ -1,0 +1,64 @@
+
+require_relative 'lib/vagrant'
+
+Vagrant.require_version ">= 2.0.0"
+
+hostname = "ti.test"
+
+ensure_plugins(['vagrant-hostmanager']);
+
+Vagrant.configure("2") do |config|
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+
+  # Set the name of VM
+  config.vm.define "ti-api-testing" do |ti_api_test|
+    ti_api_test.trigger.after :up do |trigger|
+      trigger.name = "Start Lando"
+      trigger.run_remote = {path: "scripts/start-lando.sh"}
+    end
+
+    ti_api_test.trigger.before [:halt, :destroy] do |trigger|
+      trigger.name = "Stop Lando"
+      trigger.run_remote = {path: "scripts/stop-lando.sh"}
+    end
+  end
+
+  # Networking
+  config.vm.hostname = hostname
+  config.vm.network :private_network,
+    ip: "192.168.115.191"
+
+  # SSH
+  config.ssh.insert_key = false
+  config.ssh.forward_agent = true
+
+  # Vagrant Box
+  config.vm.box = "geerlingguy/debian9"
+
+  # VM Settings
+  config.vm.provider :virtualbox do |v|
+    v.linked_clone = true
+    v.name = hostname
+    v.memory = 2048
+    v.cpus = 1
+    v.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
+    v.customize ['modifyvm', :id, '--ioapic', 'on']
+    v.gui = false
+  end
+
+  # Synced folders
+  options = {
+    type: 'nfs',
+    create: true
+  }
+  config.vm.synced_folder '../', '/code', options
+
+  # Provision
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.compatibility_mode = '2.0'
+    ansible.playbook = "playbook.yml"
+    ansible.config_file = "/vagrant/ansible.cfg"
+    ansible.verbose = false
+  end
+end

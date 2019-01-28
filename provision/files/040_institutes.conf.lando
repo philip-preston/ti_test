@@ -1,0 +1,14 @@
+# Replacement apache .conf file to direct dev.theinstitutes.org traffic to lando instead
+<VirtualHost *:80>
+    ServerName www.theinstitutes.org
+    ServerAlias theinstitutes.org
+    ServerAlias dev.theinstitutes.org
+
+    ServerAdmin webmaster@cpcuiia.org
+
+    ProxyPreserveHost On
+    ProxyPass "/" "http://tiapitesting.lndo.site:8000/"
+    ProxyPassReverse "/" "http://tiapitesting.lndo.site:8000/"
+
+    RequestHeader set Host "tiapitesting.lndo.site"
+</VirtualHost>

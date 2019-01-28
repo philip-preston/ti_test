@@ -1,0 +1,10 @@
+version: "2"
+settings:
+  conductor:
+    base: centos:7
+  project_name: ti_moodle
+services:
+  app:
+    from: php:7.2-apache
+    roles:
+      - php

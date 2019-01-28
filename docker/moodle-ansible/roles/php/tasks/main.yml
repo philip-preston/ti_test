@@ -1,0 +1,5 @@
+- name: Use default dev configuration
+  shell: mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+- name: Create moodle directories
+  shell: mkdir -m 0700 /moodledata
+- shell: chown www-data:www-data /moodledata
